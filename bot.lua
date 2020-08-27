@@ -9,10 +9,21 @@ Info.description="AccBot (Github: https://github.com/lxfly2000/AccBot"
 
 --获得bot对象
 dofile("account.lua")
-bot = Bot(qq,password)
+bot = Bot(qq,password,"device.json")
 
 --登录bot
 bot:login()
+
+at_reg="%[mirai:at:"..bot.id..",@.*%]"--注意Lua中的正则转义字符是'%'而不是'\'
+
+function is_at_me(msg)
+	return msg:match(at_reg)~=nil
+end
+
+function remove_at_me(msg)
+	local remove_at_reg=at_reg.." ?"
+	return msg:gsub(remove_at_reg,"")
+end
 
 --参数：http https ftp 或空
 function get_local_ip(protocol)
@@ -40,39 +51,49 @@ function get_local_ip(protocol)
 	return ips
 end
 
-function process_msg_ip(msg, sender)
+function process_msg_ip(msg, group, sender)
+	if is_at_me(msg) then
+		msg=remove_at_me(msg)
+	end
 	local protocol=msg:sub(4,-1)
-	protocol=protocol:sub(1,(protocol:find(" ")or 0)-1)
+	protocol=protocol:gsub(" .*","")
 	sender:sendMsg(get_local_ip(protocol))
 end
 
-function process_msg_echo(msg, sender)
+function process_msg_echo(msg, group, sender)
+	if is_at_me(msg) then
+		msg=remove_at_me(msg)
+	end
 	if msg=="echo" then
-		sender:sendMsg("echo 命令：\necho <消息>")
+		(group or sender):sendMsg("echo 命令：\necho <消息>")
 	else
-		sender:sendMsg(msg:sub(6,-1))
+		(group or sender):sendMsg(msg:sub(6,-1))
 	end
 end
 
-function process_msg_atme(msg,sender)
-	sender:sendMsg(At(sender).."可用命令：\nip\necho")
+function process_msg_atme(msg, group, sender)
+	(group or sender):sendMsg("可用命令：\nip\necho")
 end
 
-function process_msg(msg, sender)
+function process_msg(msg, group, sender)
+	local flag_is_at_me=is_at_me(msg)
+	if flag_is_at_me then
+		msg=remove_at_me(msg)
+	end
 	if msg=="ip" or msg:sub(1,3)=="ip " then
-		process_msg_ip(msg,sender)
+		process_msg_ip(msg, group, sender)
 	elseif msg=="echo" or msg:sub(1,5)=="echo " then
-		process_msg_echo(msg,sender)
-	elseif msg==At(bot.selfQQ) then
-		process_msg_atme(msg,sender)
+		process_msg_echo(msg, group, sender)
+	elseif flag_is_at_me then
+		process_msg_atme(msg, group, sender)
 	end
 end
 
 -- 订阅好友消息并回复相同的内容
 bot:subscribeFriendMsg(function(bot, msg, sender)
-	process_msg(msg,sender)
+	process_msg(msg, nil, sender)
 end)
 
 bot:subscribeGroupMsg(function(bot, msg, group, sender)
-	process_msg(msg,group)
+	process_msg(msg, group, sender)
 end)
