@@ -57,7 +57,7 @@ function process_msg_ip(msg, group, sender)
 	end
 	local protocol=msg:sub(4,-1)
 	protocol=protocol:gsub(" .*","")
-	sender:sendMsg(get_local_ip(protocol))
+	sender:sendMessage(get_local_ip(protocol))
 end
 
 function process_msg_echo(msg, group, sender)
@@ -65,14 +65,14 @@ function process_msg_echo(msg, group, sender)
 		msg=remove_at_me(msg)
 	end
 	if msg=="echo" then
-		(group or sender):sendMsg("echo 命令：\necho <消息>")
+		(group or sender):sendMessage("echo 命令：\necho <消息>")
 	else
-		(group or sender):sendMsg(msg:sub(6,-1))
+		(group or sender):sendMessage(msg:sub(6,-1))
 	end
 end
 
 function process_msg_atme(msg, group, sender)
-	(group or sender):sendMsg("可用命令：\nip\necho")
+	(group or sender):sendMessage("可用命令：\nip\necho")
 end
 
 function process_msg(msg, group, sender)
@@ -90,10 +90,10 @@ function process_msg(msg, group, sender)
 end
 
 -- 订阅好友消息并回复相同的内容
-bot:subscribeFriendMsg(function(bot, msg, sender)
-	process_msg(msg, nil, sender)
+bot:subscribe("FriendMessageEvent",function(event)
+	process_msg(event.message, nil, event.sender)
 end)
 
-bot:subscribeGroupMsg(function(bot, msg, group, sender)
-	process_msg(msg, group, sender)
+bot:subscribe("GroupMessageEvent",function(event)
+	process_msg(event.message, event.group, event.sender)
 end)

@@ -6,4 +6,4 @@ path %path%;%JAVA_HOME%\bin
 for %%i in (*.lua) do set luafile=%%i
 for %%i in (lua-mirai*.jar) do set miraifile=%%i
 ::ÔËÐÐ
-java -jar %miraifile% %luafile%
+java -jar %miraifile% exec %luafile%
