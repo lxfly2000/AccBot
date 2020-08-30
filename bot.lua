@@ -57,7 +57,11 @@ function process_msg_ip(msg, group, sender)
 	end
 	local protocol=msg:sub(4,-1)
 	protocol=protocol:gsub(" .*","")
-	sender:sendMessage(get_local_ip(protocol))
+	if group==nil then
+		sender:sendMessage(get_local_ip(protocol))
+	else
+		bot:getFriend(sender.id):sendMessage(get_local_ip(protocol))
+	end
 end
 
 function process_msg_echo(msg, group, sender)
