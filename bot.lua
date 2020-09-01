@@ -9,7 +9,7 @@ Info.description="AccBot (Github: https://github.com/lxfly2000/AccBot"
 
 --获得bot对象
 dofile("account.lua")
-bot = Bot(qq,password,"device.json")
+bot = Bot(qq,password,{protocol="ANDROID_PHONE",fileBasedDeviceInfo="device.json"})
 
 --登录bot
 bot:login()
