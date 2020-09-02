@@ -11,6 +11,32 @@ Info.description="AccBot (Github: https://github.com/lxfly2000/AccBot"
 dofile("account.lua")
 bot = Bot(qq,password,{protocol="ANDROID_PHONE",fileBasedDeviceInfo="device.json"})
 
+function show_device_info(path)
+	local f=io.open(path)
+	local s=""
+	for line in f:lines() do
+		s=s..line.."\n"
+	end
+	f:close()
+	local j=Json.parseJson(s)
+	for k,v in pairs(j) do
+		local sv=""
+		if k=="imsiMd5" then
+			for k1,v1 in pairs(v) do
+				sv=sv..string.format("%02x",(v1+256)%256)
+			end
+		elseif type(v)=="table" then
+			for k1,v1 in pairs(v) do
+				sv=sv..string.char((v1+256)%256)
+			end
+		else
+			sv=v
+		end
+		print(k,sv)
+	end
+end
+show_device_info("device.json")
+
 --登录bot
 bot:login()
 
