@@ -109,11 +109,15 @@ function process_msg(msg, group, sender)
 	local flag_is_at_me=is_at_me(msg)
 	if flag_is_at_me then
 		msg=remove_at_me(msg)
+	elseif group~=nil then
+		return
 	end
 	if msg=="ip" or msg:sub(1,3)=="ip " then
 		process_msg_ip(msg, group, sender)
 	elseif msg=="echo" or msg:sub(1,5)=="echo " then
 		process_msg_echo(msg, group, sender)
+	elseif msg==".miraiexit" then
+		bot:close()
 	elseif flag_is_at_me then
 		process_msg_atme(msg, group, sender)
 	end
