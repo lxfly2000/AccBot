@@ -5,7 +5,7 @@ Info={}
 Info.name="AccBot"
 Info.author="lxfly2000"
 Info.version="1.0"
-Info.description="AccBot (Github: https://github.com/lxfly2000/AccBot"
+Info.description="AccBot (Github: https://github.com/lxfly2000/AccBot)"
 
 --获得bot对象
 dofile("account.lua")
@@ -40,7 +40,7 @@ show_device_info("device.json")
 --登录bot
 bot:login()
 
-at_reg="%[mirai:at:"..bot.id..",@.*%]"--注意Lua中的正则转义字符是'%'而不是'\'
+at_reg="%[mirai:at:"..bot.id.."%]"--注意Lua中的正则转义字符是'%'而不是'\'
 
 function is_at_me(msg)
 	return msg:match(at_reg)~=nil
@@ -125,9 +125,9 @@ end
 
 -- 订阅好友消息并回复相同的内容
 bot:subscribe("FriendMessageEvent",function(event)
-	process_msg(event.message, nil, event.sender)
+	process_msg(tostring(event.message), nil, event.sender)
 end)
 
 bot:subscribe("GroupMessageEvent",function(event)
-	process_msg(event.message, event.group, event.sender)
+	process_msg(tostring(event.message), event.group, event.sender)
 end)
