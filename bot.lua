@@ -5,7 +5,7 @@ Info={}
 Info.name="AccBot"
 Info.author="lxfly2000"
 Info.version="1.0"
-Info.description="AccBot (Github: https://github.com/lxfly2000/AccBot)"
+Info.description="AccBot (Github: https://github.com/lxfly2000/AccBot"
 
 --获得bot对象
 dofile("account.lua")
@@ -131,3 +131,5 @@ end)
 bot:subscribe("GroupMessageEvent",function(event)
 	process_msg(tostring(event.message), event.group, event.sender)
 end)
+
+bot:join()
